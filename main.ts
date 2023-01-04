@@ -1,47 +1,35 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { Plugin, MarkdownPostProcessorContext } from 'obsidian';
 
 export default class ancestry extends Plugin 
 {
 	parents : any[string];
 	
+	public postprocessor = (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => 
+	{
+		let person = ctx.sourcePath.substring(0, ctx.sourcePath.length - 3);
+		this.renderChildren(person, el);
+	}
+	
 	async onload() 
 	{
-    	console.log('Loading ancestry')
+    	console.log('Loading ancestry');
 		
 		this.addRibbonIcon("reset", "Recalculate ancestry", async () => 
 		{
-			this.recalculateAncestry();
+			this.calculateParents();
 		});
 		
-		this.recalculateAncestry();
+		this.calculateParents();
 		
-		this.registerMarkdownCodeBlockProcessor("ancestry", (source, el, ctx) => 
-		{
-			let currentPerson = new String(ctx.sourcePath);
-			
-			currentPerson = currentPerson.substring(0, currentPerson.length - 3);
-			
-			let result: any = [];
-			
-			for(let key in this.parents)
-			{
-				if(this.parents[key] && this.parents[key].includes(currentPerson))
-					result.push(key);
-			}
-			
-			let children = el.createEl("p", { text: "Kinder: "});
-			
-			result.forEach((element: string) => {
-				children.createEl("a", {text: element});
-				children.createEl("span", {text: ", "});
-			});
-			
-			children.createEl("hr");
-			
-		});
+		this.registerMarkdownCodeBlockProcessor("ancestry", this.postprocessor);
   	}
 	
-	async recalculateAncestry()
+  	async onunload() 
+	{
+    	console.log('Unloading ancestry');
+  	}
+	
+	async calculateParents()
 	{
 		this.parents = Array();
 		
@@ -51,13 +39,13 @@ export default class ancestry extends Plugin
 		for (let i = 0; i < files.length; i++) 
 		{
 			let content = await vault.cachedRead(files[i]);
-			let match = this.match(content);
+			let match = this.getParents(content);
 			
 			this.parents[files[i].basename] = match;
 		}
 	}
 	
-	match(content: string)
+	getParents(content: string)
 	{
 		const regex = /Eltern: (.*)/g
 		
@@ -103,8 +91,23 @@ export default class ancestry extends Plugin
 		return result;
 	}
 	
-  	async onunload() 
+	renderChildren(person: string, el: HTMLElement)
 	{
-    	console.log('Unloading ancestry');
-  	}
+		let result: any = [];
+		
+		for(let key in this.parents)
+		{
+			if(this.parents[key] && this.parents[key].includes(person))
+				result.push(key);
+		}
+		
+		let children = el.createEl("p", { text: "Kinder: "});
+		
+		result.forEach((element: string) => {
+			children.createEl("a", {text: element});
+			children.createEl("span", {text: ", "});
+		});
+		
+		children.createEl("hr");
+	}
 }
