@@ -1,13 +1,15 @@
 import { Plugin, MarkdownPostProcessorContext } from 'obsidian';
+import { Children } from 'modules/children';
 
-export default class ancestry extends Plugin 
+export default class Ancestry extends Plugin 
 {
-	parents : any[string];
+	ancestryList : any[string];
 	
 	public postprocessor = (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => 
 	{
 		let person = ctx.sourcePath.substring(0, ctx.sourcePath.length - 3);
-		this.renderChildren(person, el);
+		
+		Children.renderChildren(person, el, this.ancestryList);
 	}
 	
 	async onload() 
@@ -16,10 +18,10 @@ export default class ancestry extends Plugin
 		
 		this.addRibbonIcon("reset", "Recalculate ancestry", async () => 
 		{
-			this.calculateParents();
+			this.calculateAncestryList();
 		});
 		
-		this.calculateParents();
+		this.calculateAncestryList();
 		
 		this.registerMarkdownCodeBlockProcessor("ancestry", this.postprocessor);
   	}
@@ -29,9 +31,9 @@ export default class ancestry extends Plugin
     	console.log('Unloading ancestry');
   	}
 	
-	async calculateParents()
+	async calculateAncestryList()
 	{
-		this.parents = Array();
+		this.ancestryList = Array();
 		
 		const { vault } = this.app;
 		const files = vault.getMarkdownFiles()
@@ -41,7 +43,7 @@ export default class ancestry extends Plugin
 			let content = await vault.cachedRead(files[i]);
 			let match = this.getParents(content);
 			
-			this.parents[files[i].basename] = match;
+			this.ancestryList[files[i].basename] = match;
 		}
 	}
 	
@@ -91,26 +93,35 @@ export default class ancestry extends Plugin
 		return result;
 	}
 	
-	renderChildren(person: string, el: HTMLElement)
-	{
-		let children: any = [];
+	renderSiblings(person: string, el: HTMLElement)
+	{/*
+		let siblings: any = [];
 		
-		for(let key in this.parents)
+		let thisParents = this.ancestryList[person];
+		
+		thisParents.forEach((parent: string) => 
 		{
-			if(this.parents[key] && this.parents[key].includes(person))
-				children.push(key);
-		}
+			for(let key in this.ancestryList)
+			{
+				if(
+					this.ancestryList[key] && 
+					this.ancestryList[key].includes(parent) && 
+					key != person && 
+					!siblings.includes(key)
+				)
+					siblings.push(key);
+			}
+		});
 		
-		let html = el.createEl("p", { text: "Kinder: "});
 		
-		for (var i = 0; i < children.length; i++) 
+		let html = el.createEl("span", { text: "Geschwister: "});
+		
+		for (var i = 0; i < siblings.length; i++)
 		{
-			html.createEl("a", {text: children[i]});
+			html.createEl("a", {text: siblings[i]});
 			
-			if(i < children.length - 1)
+			if(i < siblings.length - 1)
 				html.createEl("span", {text: ", "});
-		}
-		
-		html.createEl("hr");
+		}*/
 	}
 }
