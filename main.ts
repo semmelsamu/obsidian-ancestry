@@ -93,21 +93,24 @@ export default class ancestry extends Plugin
 	
 	renderChildren(person: string, el: HTMLElement)
 	{
-		let result: any = [];
+		let children: any = [];
 		
 		for(let key in this.parents)
 		{
 			if(this.parents[key] && this.parents[key].includes(person))
-				result.push(key);
+				children.push(key);
 		}
 		
-		let children = el.createEl("p", { text: "Kinder: "});
+		let html = el.createEl("p", { text: "Kinder: "});
 		
-		result.forEach((element: string) => {
-			children.createEl("a", {text: element});
-			children.createEl("span", {text: ", "});
-		});
+		for (var i = 0; i < children.length; i++) 
+		{
+			html.createEl("a", {text: children[i]});
+			
+			if(i < children.length - 1)
+				html.createEl("span", {text: ", "});
+		}
 		
-		children.createEl("hr");
+		html.createEl("hr");
 	}
 }
