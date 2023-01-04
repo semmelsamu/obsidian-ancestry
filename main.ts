@@ -1,5 +1,6 @@
 import { Plugin, MarkdownPostProcessorContext } from 'obsidian';
 import { Children } from 'modules/children';
+import { Siblings } from 'modules/siblings';
 
 export default class Ancestry extends Plugin 
 {
@@ -91,37 +92,5 @@ export default class Ancestry extends Plugin
 		}
 		
 		return result;
-	}
-	
-	renderSiblings(person: string, el: HTMLElement)
-	{/*
-		let siblings: any = [];
-		
-		let thisParents = this.ancestryList[person];
-		
-		thisParents.forEach((parent: string) => 
-		{
-			for(let key in this.ancestryList)
-			{
-				if(
-					this.ancestryList[key] && 
-					this.ancestryList[key].includes(parent) && 
-					key != person && 
-					!siblings.includes(key)
-				)
-					siblings.push(key);
-			}
-		});
-		
-		
-		let html = el.createEl("span", { text: "Geschwister: "});
-		
-		for (var i = 0; i < siblings.length; i++)
-		{
-			html.createEl("a", {text: siblings[i]});
-			
-			if(i < siblings.length - 1)
-				html.createEl("span", {text: ", "});
-		}*/
 	}
 }
