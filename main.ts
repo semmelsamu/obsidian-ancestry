@@ -17,7 +17,9 @@ export default class ancestry extends Plugin
 		
 		this.registerMarkdownCodeBlockProcessor("ancestry", (source, el, ctx) => 
 		{
-			let currentPerson = source.trim();
+			let currentPerson = new String(ctx.sourcePath);
+			
+			currentPerson = currentPerson.substring(0, currentPerson.length - 3);
 			
 			let result: any = [];
 			
@@ -27,7 +29,15 @@ export default class ancestry extends Plugin
 					result.push(key);
 			}
 			
-			el.createEl("p", { text: "Kinder: " + String(result).valueOf() });
+			let children = el.createEl("p", { text: "Kinder: "});
+			
+			result.forEach((element: string) => {
+				children.createEl("a", {text: element});
+				children.createEl("span", {text: ", "});
+			});
+			
+			children.createEl("hr");
+			
 		});
   	}
 	
