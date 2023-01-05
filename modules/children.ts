@@ -1,31 +1,86 @@
 
+import { Util } from "./util";
+
 export class Children
 {
-    static calculateChildren(person: string, ancestryList: any[string])
+    static calculate(person: string, parentList: any[string])
     {
-        let children = [];
+        let children: any[string] = [];
         
-        for(let key in ancestryList)
+        for(let child in parentList)
 		{
-			if(ancestryList[key] && ancestryList[key].includes(person))
-				children.push(key);
+			if(parentList[child] && parentList[child].includes(person))
+			{
+				let parentsSorted = parentList[child].sort();
+				
+				let childrenKey: string = "";
+				
+				parentsSorted.forEach((otherParent: string) => 
+				{
+					if(otherParent != person)
+						childrenKey += otherParent;
+				});
+				
+				if(!children[childrenKey])
+					children[childrenKey] = Array();
+					
+				children[childrenKey].push(child);
+			}
 		}
+		
+		console.log(children);
         
         return children;
     }
     
-    static renderChildren(person: string, el: HTMLElement, ancestryList: any[string])
+    static render(person: string, parentList: any[string], el: HTMLElement)
 	{
-		let children = this.calculateChildren(person, ancestryList);
+		let children = this.calculate(person, parentList);
+		
+		if(Object.keys(children).length == 0)
+			return
 		
 		let html = el.createEl("span", { text: "Kinder: "});
 		
-		for (var i = 0; i < children.length; i++) 
+		let index = 0;
+		
+		for(let otherParents in children)
 		{
-			html.createEl("a", {text: children[i]});
+			let lastIndex = 0;
 			
-			if(i < children.length - 1)
-				html.createEl("span", {text: ", "});
+			for(var i = 0; i < children[otherParents].length; i++)
+			{
+				Util.createLink(children[otherParents][i], html);
+			
+				if(i < children[otherParents].length - 1)
+					html.createEl("span", {text: ", "});
+					
+				lastIndex = i;
+			}
+			
+			let otherParentsList = parentList[children[otherParents][lastIndex]];
+			
+			html.createEl("span", {text: " (mit "});
+			
+			console.log(otherParentsList);
+			
+			for(var i = 0; i < otherParentsList.length; i++)
+			{
+				if(otherParentsList[i] != person)
+					Util.createLink(otherParentsList[i], html);
+				
+				if(i < otherParentsList.length - 2)
+					Util.createLink(", ", html);
+			}
+			
+			html.createEl("span", {text: ")"});
+			
+			if(index < Object.keys(children).length - 1)
+				html.createEl("span", {text: "; "});
+				
+			index++;
 		}
+		
+		el.createEl("br");
 	}
 }

@@ -1,28 +1,32 @@
+
 import { Plugin, MarkdownPostProcessorContext } from 'obsidian';
 import { Children } from 'modules/children';
 import { Siblings } from 'modules/siblings';
 
 export default class Ancestry extends Plugin 
 {
-	ancestryList : any[string];
+	parentList : any[string];
 	
 	public postprocessor = (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => 
 	{
 		let person = ctx.sourcePath.substring(0, ctx.sourcePath.length - 3);
 		
-		Children.renderChildren(person, el, this.ancestryList);
+		Children.render(person, this.parentList, el);
+		Siblings.render(person, this.parentList, el);
 	}
 	
 	async onload() 
 	{
+		console.clear();
+		
     	console.log('Loading ancestry');
 		
 		this.addRibbonIcon("reset", "Recalculate ancestry", async () => 
 		{
-			this.calculateAncestryList();
+			this.calculateParentList();
 		});
 		
-		this.calculateAncestryList();
+		this.calculateParentList();
 		
 		this.registerMarkdownCodeBlockProcessor("ancestry", this.postprocessor);
   	}
@@ -32,9 +36,9 @@ export default class Ancestry extends Plugin
     	console.log('Unloading ancestry');
   	}
 	
-	async calculateAncestryList()
+	async calculateParentList()
 	{
-		this.ancestryList = Array();
+		this.parentList = Array();
 		
 		const { vault } = this.app;
 		const files = vault.getMarkdownFiles()
@@ -44,7 +48,7 @@ export default class Ancestry extends Plugin
 			let content = await vault.cachedRead(files[i]);
 			let match = this.getParents(content);
 			
-			this.ancestryList[files[i].basename] = match;
+			this.parentList[files[i].basename] = match;
 		}
 	}
 	
