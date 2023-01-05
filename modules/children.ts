@@ -27,8 +27,6 @@ export class Children
 				children[childrenKey].push(child);
 			}
 		}
-		
-		console.log(children);
         
         return children;
     }
@@ -61,8 +59,6 @@ export class Children
 			let otherParentsList = parentList[children[otherParents][lastIndex]];
 			
 			html.createEl("span", {text: " (mit "});
-			
-			console.log(otherParentsList);
 			
 			for(var i = 0; i < otherParentsList.length; i++)
 			{

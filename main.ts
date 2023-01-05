@@ -26,7 +26,9 @@ export default class Ancestry extends Plugin
 			this.calculateParentList();
 		});
 		
-		this.calculateParentList();
+		await this.calculateParentList();
+		
+		console.log(Siblings.calculate("Ilse Kroiß", this.parentList))
 		
 		this.registerMarkdownCodeBlockProcessor("ancestry", this.postprocessor);
   	}

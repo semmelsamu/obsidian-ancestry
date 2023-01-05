@@ -5,21 +5,31 @@ export class Siblings
 {
 	static calculate(person: string, parentList: any[string])
 	{
-		let siblings: any = [];
+		let siblings: any[string] = [];
 		
-		let thisParents = parentList[person];
-		
-		thisParents.forEach((parent: string) => 
+		parentList[person].forEach((parent: string) => 
 		{
-			for(let key in parentList)
+			for(let child in parentList)
 			{
-				if(
-					parentList[key] && 
-					parentList[key].includes(parent) && 
-					key != person && 
-					!siblings.includes(key)
-				)
-					siblings.push(key);
+				if(!parentList[child] || !parentList[child].includes(parent) || child == person)
+					continue
+					
+				let parentsSorted = parentList[child].sort();
+				
+				let key: string = "";
+				
+				parentsSorted.forEach((parent: string) => 
+				{
+					key += parent;
+				});
+				
+				if(!siblings[key])
+					siblings[key] = Array();
+					
+				if(siblings[key].includes(child))	
+					continue
+				
+				siblings[key].push(child);
 			}
 		});
 		
@@ -30,17 +40,45 @@ export class Siblings
 	{
 		let siblings = this.calculate(person, parentList);
 		
-		if(siblings.length == 0)
-			return
+		let key = "";
 		
-		let html = el.createEl("span", { text: "Geschwister: "});
-		
-		for (var i = 0; i < siblings.length; i++)
+		parentList[person].sort().forEach((parent: string) => 
 		{
-			Util.createLink(siblings[i], html);
+			key += parent;
+		});
+		
+		let real_siblings = siblings[key];
+		
+		delete siblings[key];
+		
+		if(real_siblings.length > 0)
+		{
+			el.createEl("span", { text: "Geschwister: "});
 			
-			if(i < siblings.length - 1)
-				html.createEl("span", {text: ", "});
+			Util.renderPersons(real_siblings, el);
 		}
+		
+		if(Object.keys(siblings).length > 0 && real_siblings.length > 0)
+			el.createEl("br");
+		
+		if(Object.keys(siblings).length > 0)
+		{
+			el.createEl("span", {text: "Halbgeschwister: "})
+			
+			for(let key in siblings)
+			{
+				let last = Util.renderPersons(siblings[key], el)
+				
+				el.createEl("span", {text: " (von "})
+				
+				console.log(parentList[last]);
+				
+				Util.renderPersons(parentList[last].filter((e: string) => {return parentList[person].includes(e)}), el)
+				
+				el.createEl("span", {text: ")"})
+			}
+		}
+		
+		
 	}
 }
