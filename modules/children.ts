@@ -51,11 +51,14 @@ export class Children
 		{
 			let lastIndex = Util.renderPersons(children[otherParents], el);
 			
-			let otherParentsList = parentList[lastIndex];
+			let otherParentsList = parentList[lastIndex].filter((e: string) => {return e != person});
+			
+			if(otherParentsList.length == 0)
+				continue
 			
 			el.createEl("span", {text: " (mit "});
 			
-			Util.renderPersons(otherParentsList.filter((e: string) => {return e != person}), el)
+			Util.renderPersons(otherParentsList, el)
 			
 			el.createEl("span", {text: ")"});
 			
