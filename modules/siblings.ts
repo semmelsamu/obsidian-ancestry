@@ -64,7 +64,7 @@ export class Siblings
 		delete siblings[key];
 		
 		
-		let hasRealSiblings = real_siblings.length > 0;
+		let hasRealSiblings = real_siblings && real_siblings.length > 0;
 		let hasStepSiblings = Object.keys(siblings).length;
 		
 		
