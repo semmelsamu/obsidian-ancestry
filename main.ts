@@ -21,8 +21,6 @@ export default class Ancestry extends Plugin
 	
 	async onload() 
 	{
-		console.clear();
-		
     	console.log('Loading ancestry');
 		
 		this.addRibbonIcon("reset", "Recalculate ancestry", async () => 
@@ -31,8 +29,6 @@ export default class Ancestry extends Plugin
 		});
 		
 		await this.calculateParentList();
-		
-		console.log(Siblings.calculate("Ilse Kroiß", this.parentList))
 		
 		this.registerMarkdownCodeBlockProcessor("ancestry", this.postprocessor);
   	}

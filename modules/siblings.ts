@@ -90,8 +90,6 @@ export class Siblings
 				
 				el.createEl("span", {text: " (von "})
 				
-				console.log(parentList[last]);
-				
 				Util.renderPersons(parentList[last].filter((e: string) => {return parentList[person].includes(e)}), el)
 				
 				el.createEl("span", {text: ")"})
