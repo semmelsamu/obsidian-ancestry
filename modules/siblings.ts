@@ -40,30 +40,41 @@ export class Siblings
 	{
 		let siblings = this.calculate(person, parentList);
 		
+		
+		// Get real siblings
+		
 		let key = "";
 		
-		parentList[person].sort().forEach((parent: string) => 
-		{
+		parentList[person].sort().forEach((parent: string) => {
 			key += parent;
 		});
 		
 		let real_siblings = siblings[key];
 		
+		// siblings only contains step siblings
 		delete siblings[key];
 		
-		if(real_siblings.length > 0)
+		
+		
+		let hasRealSiblings = real_siblings.length > 0;
+		let hasStepSiblings = Object.keys(siblings).length;
+		
+		
+		if(hasRealSiblings)
 		{
 			el.createEl("span", { text: "Geschwister: "});
 			
 			Util.renderPersons(real_siblings, el);
 		}
 		
-		if(Object.keys(siblings).length > 0 && real_siblings.length > 0)
+		if(hasRealSiblings && hasStepSiblings)
 			el.createEl("br");
 		
-		if(Object.keys(siblings).length > 0)
+		if(hasStepSiblings)
 		{
 			el.createEl("span", {text: "Halbgeschwister: "})
+			
+			let index = 0;
 			
 			for(let key in siblings)
 			{
@@ -77,8 +88,16 @@ export class Siblings
 				
 				el.createEl("span", {text: ")"})
 			}
+			
+			if(index < Object.keys(siblings).length - 1)
+				el.createEl("span", {text: "; "});
+				
+			index++;
 		}
 		
-		
+		if(hasRealSiblings || hasStepSiblings) {
+			el.createEl("br");
+			el.createEl("br");
+		}
 	}
 }

@@ -11,8 +11,8 @@ export default class Ancestry extends Plugin
 	{
 		let person = ctx.sourcePath.substring(0, ctx.sourcePath.length - 3);
 		
-		Children.render(person, this.parentList, el);
 		Siblings.render(person, this.parentList, el);
+		Children.render(person, this.parentList, el);
 	}
 	
 	async onload() 

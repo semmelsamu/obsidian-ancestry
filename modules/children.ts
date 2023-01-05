@@ -38,45 +38,26 @@ export class Children
 		if(Object.keys(children).length == 0)
 			return
 		
-		let html = el.createEl("span", { text: "Kinder: "});
+		el.createEl("span", { text: "Kinder: "});
 		
 		let index = 0;
 		
 		for(let otherParents in children)
 		{
-			let lastIndex = 0;
+			let lastIndex = Util.renderPersons(children[otherParents], el);
 			
-			for(var i = 0; i < children[otherParents].length; i++)
-			{
-				Util.createLink(children[otherParents][i], html);
+			let otherParentsList = parentList[lastIndex];
 			
-				if(i < children[otherParents].length - 1)
-					html.createEl("span", {text: ", "});
-					
-				lastIndex = i;
-			}
+			el.createEl("span", {text: " (mit "});
 			
-			let otherParentsList = parentList[children[otherParents][lastIndex]];
+			Util.renderPersons(otherParentsList.filter((e: string) => {return e != person}), el)
 			
-			html.createEl("span", {text: " (mit "});
-			
-			for(var i = 0; i < otherParentsList.length; i++)
-			{
-				if(otherParentsList[i] != person)
-					Util.createLink(otherParentsList[i], html);
-				
-				if(i < otherParentsList.length - 2)
-					Util.createLink(", ", html);
-			}
-			
-			html.createEl("span", {text: ")"});
+			el.createEl("span", {text: ")"});
 			
 			if(index < Object.keys(children).length - 1)
-				html.createEl("span", {text: "; "});
+				el.createEl("span", {text: "; "});
 				
 			index++;
 		}
-		
-		el.createEl("br");
 	}
 }
