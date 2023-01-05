@@ -11,7 +11,11 @@ export default class Ancestry extends Plugin
 	{
 		let person = ctx.sourcePath.substring(0, ctx.sourcePath.length - 3);
 		
-		Siblings.render(person, this.parentList, el);
+		if(Siblings.render(person, this.parentList, el) && Children.hasChildren(person, this.parentList)) {
+			el.createEl("br");
+			el.createEl("br");
+		}
+		
 		Children.render(person, this.parentList, el);
 	}
 	

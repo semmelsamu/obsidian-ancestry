@@ -7,7 +7,12 @@ export class Siblings
 	{
 		let siblings: any[string] = [];
 		
-		parentList[person].forEach((parent: string) => 
+		let parents = parentList[person];
+		
+		if(!parents)
+			return
+		
+		parents.forEach((parent: string) => 
 		{
 			for(let child in parentList)
 			{
@@ -44,8 +49,12 @@ export class Siblings
 		// Get real siblings
 		
 		let key = "";
+		let parents = parentList[person];
 		
-		parentList[person].sort().forEach((parent: string) => {
+		if(!parents)
+			return
+		
+		parents.sort().forEach((parent: string) => {
 			key += parent;
 		});
 		
@@ -53,7 +62,6 @@ export class Siblings
 		
 		// siblings only contains step siblings
 		delete siblings[key];
-		
 		
 		
 		let hasRealSiblings = real_siblings.length > 0;
@@ -95,9 +103,7 @@ export class Siblings
 			index++;
 		}
 		
-		if(hasRealSiblings || hasStepSiblings) {
-			el.createEl("br");
-			el.createEl("br");
-		}
+		return hasStepSiblings || hasRealSiblings;
+		
 	}
 }

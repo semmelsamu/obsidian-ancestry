@@ -3,6 +3,11 @@ import { Util } from "./util";
 
 export class Children
 {
+	static hasChildren(person: string, parentList: any[string])
+	{
+		return Object.keys(this.calculate(person, parentList)).length > 0;
+	}
+	
     static calculate(person: string, parentList: any[string])
     {
         let children: any[string] = [];
@@ -59,5 +64,7 @@ export class Children
 				
 			index++;
 		}
+		
+		return true;
 	}
 }
