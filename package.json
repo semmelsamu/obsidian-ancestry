@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-ancestry",
-	"version": "1",
+	"version": "v0.1",
 	"description": "Obsidian plugin for family tree management",
 	"main": "main.js",
 	"scripts": {

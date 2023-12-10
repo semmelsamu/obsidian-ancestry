@@ -1,11 +1,11 @@
 {
 	"id": "obsidian-ancestry",
 	"name": "Ancestry",
-	"version": "1",
+	"version": "v0.1",
 	"minAppVersion": "0.15.0",
 	"description": "Obsidian plugin for family tree management",
 	"author": "semmelsamu",
-	"authorUrl": "http://samuelkroiss.de/",
-	"fundingUrl": "http://samuelkroiss.de/",
+	"authorUrl": "https://www.samuelkroiss.de/",
+	"fundingUrl": "https://www.samuelkroiss.de/",
 	"isDesktopOnly": false
 }
