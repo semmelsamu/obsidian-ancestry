@@ -1,5 +1,10 @@
 export class Util {
-	public static createLink(href: string, el: HTMLElement) {
+	/**
+	 * Create a wikilink and append it to the node.
+	 * @param href The href / text of the wikilink
+	 * @param el The element to append the created wikilink to
+	 */
+	public static renderWikilink(href: string, el: HTMLElement) {
 		return el.createEl("a", {
 			text: href,
 			href: href,
@@ -7,17 +12,12 @@ export class Util {
 		});
 	}
 
+	/**
+	 * Create wikilinks and append them to the node.
+	 * @param list The hrefs / texts of the wikilinks
+	 * @param el The element to append the created wikilinks to
+	 */
 	public static renderWikilinks(list: string[], el: HTMLElement) {
-		let value: any;
-
-		for (var i = 0; i < list.length; i++) {
-			value = list[i];
-
-			Util.createLink(value, el);
-
-			if (i < list.length - 1) el.createEl("span", { text: ", " });
-		}
-
-		return value;
+		list.forEach((href) => this.renderWikilink(href, el));
 	}
 }
