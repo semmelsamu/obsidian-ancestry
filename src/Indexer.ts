@@ -13,12 +13,11 @@ export class Indexer {
 	}
 
 	static async getIndex() {
-		return Ancestry.instance.loadData();
+		return (await Ancestry.instance.loadData()) ?? [];
 	}
 
 	public static async getPerson(name: string) {
-		return (await this.getIndex()).find(
-			(person: any) => person.name == name
-		);
+		const index = await this.getIndex();
+		return index.find((person: any) => person.name == name);
 	}
 }

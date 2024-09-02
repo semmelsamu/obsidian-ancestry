@@ -1,4 +1,4 @@
-import { Plugin } from "obsidian";
+import { Notice, Plugin } from "obsidian";
 import { Indexer } from "src/Indexer";
 import { Renderer } from "src/Renderer";
 
@@ -12,7 +12,11 @@ export default class Ancestry extends Plugin {
 
 		await this.saveData(null);
 
-		await Indexer.indexVault();
+		this.app.workspace.onLayoutReady(() => {
+			new Notice("Indexing vault...");
+			Indexer.indexVault();
+			new Notice("Done");
+		});
 
 		this.registerEvent(
 			this.app.vault.on("modify", () => {

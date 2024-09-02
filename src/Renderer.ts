@@ -28,6 +28,8 @@ export class Renderer {
 		// Fetch Data
 		const data = await Indexer.getPerson(person);
 
+		if (!data) return;
+
 		// Remove Loading Text
 		el.replaceChildren();
 
