@@ -8,6 +8,9 @@ export class ChildrenRenderer {
 			.createEl("div")
 			.createEl("p", { text: "Kinder: " });
 
-		Util.renderWikilinks(data.children, childrenParagraph);
+		Util.renderWikilinks(
+			data.children.map((person: any) => person.name),
+			childrenParagraph
+		);
 	}
 }

@@ -6,14 +6,47 @@ export class Parser {
 	 * Reads every file in the Vault and attempts to calculate the parents.
 	 */
 	static async all() {
-		return Promise.all(
+		const data = await Promise.all(
 			app.vault.getMarkdownFiles().map(async (file: any) => {
 				let content = await app.vault.cachedRead(file);
 				let parents = this.extractParents(content);
 
-				return { name: file.basename, parents: parents ?? [] };
+				return { file, parents: parents ?? [] };
 			})
 		);
+
+		let persons = data.map((person) => {
+			return {
+				name: person.file.basename,
+				parents: [] as any[],
+				children: [],
+			};
+		});
+
+		// Link parents
+		persons.forEach((person) => {
+			const originalData = data.find(
+				(p) => p.file.basename == person.name
+			);
+			if (originalData) {
+				person.parents = originalData.parents
+					.map((parentName) => {
+						return (
+							persons.find((x) => x.name == parentName) || null
+						);
+					})
+					.filter((parent) => parent !== null); // Remove any null entries
+			}
+		});
+
+		// Link children
+		persons.forEach((person: any) => {
+			person.children = persons.filter((child: any) =>
+				child.parents.find((p: any) => p.name == person.name)
+			);
+		});
+
+		return persons;
 	}
 
 	/**
