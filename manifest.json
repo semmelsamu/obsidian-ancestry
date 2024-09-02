@@ -1,7 +1,7 @@
 {
 	"id": "obsidian-ancestry",
 	"name": "Ancestry",
-	"version": "v0.1",
+	"version": "0.1",
 	"minAppVersion": "0.15.0",
 	"description": "Obsidian plugin for family tree management",
 	"author": "semmelsamu",

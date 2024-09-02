@@ -1,92 +1,37 @@
-import { Plugin, MarkdownPostProcessorContext } from "obsidian";
-import { Children } from "modules/children";
-import { Siblings } from "modules/siblings";
+import { Plugin } from "obsidian";
+import { Indexer } from "src/Indexer";
+import { Renderer } from "src/Renderer";
 
 export default class Ancestry extends Plugin {
-	parentList: any[string];
-
-	public postprocessor = (
-		source: string,
-		el: HTMLElement,
-		ctx: MarkdownPostProcessorContext
-	) => {
-		let person = ctx.sourcePath.substring(0, ctx.sourcePath.length - 3);
-
-		if (
-			Siblings.render(person, this.parentList, el) &&
-			Children.hasChildren(person, this.parentList)
-		) {
-			el.createEl("br");
-			el.createEl("br");
-		}
-
-		Children.render(person, this.parentList, el);
-	};
+	public static instance: Ancestry;
 
 	async onload() {
-		console.log("Loading ancestry");
+		console.log(`Loading ${this.manifest.name} v${this.manifest.version}`);
 
-		this.addRibbonIcon("reset", "Recalculate ancestry", async () => {
-			this.calculateParentList();
-		});
+		Ancestry.instance = this;
 
-		await this.calculateParentList();
+		await this.saveData(null);
 
-		this.registerMarkdownCodeBlockProcessor("ancestry", this.postprocessor);
-	}
+		await Indexer.indexVault();
 
-	async onunload() {
-		console.log("Unloading ancestry");
-	}
+		this.registerEvent(
+			this.app.vault.on("modify", () => {
+				Indexer.indexVault();
+			})
+		);
 
-	async calculateParentList() {
-		this.parentList = Array();
+		this.registerEvent(
+			this.app.vault.on("delete", () => {
+				Indexer.indexVault();
+			})
+		);
 
-		const { vault } = this.app;
-		const files = vault.getMarkdownFiles();
+		this.registerEvent(
+			this.app.vault.on("rename", () => {
+				Indexer.indexVault();
+			})
+		);
 
-		for (let i = 0; i < files.length; i++) {
-			let content = await vault.cachedRead(files[i]);
-			let match = this.getParents(content);
-
-			this.parentList[files[i].basename] = match;
-		}
-	}
-
-	getParents(content: string) {
-		const regex = /Eltern: (.*)/g;
-
-		let regexResult = content.match(regex);
-
-		if (!regexResult) return;
-
-		let match = regexResult[0];
-
-		match = match.substring(8);
-
-		let result = [];
-
-		let in_bracket = false;
-
-		let match_start = 0;
-		let match_end = 0;
-
-		for (var i = 0; i < match.length; i++) {
-			if (!in_bracket) {
-				if (match.charAt(i) == "[" && match.charAt(i + 1) == "[") {
-					in_bracket = true;
-					match_start = i + 2;
-				}
-			} else {
-				if (match.charAt(i) == "]" && match.charAt(i + 1) == "]") {
-					in_bracket = false;
-					match_end = i;
-
-					result.push(match.substring(match_start, match_end));
-				}
-			}
-		}
-
-		return result;
+		this.registerMarkdownCodeBlockProcessor("ancestry", Renderer.render);
 	}
 }
