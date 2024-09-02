@@ -1,6 +1,7 @@
 import Ancestry from "main";
 import { Calculator } from "./Calculator";
 import { Parser } from "./Parser";
+import { MarkdownView } from "obsidian";
 
 /**
  * Gathers vault parsing and relation calculating.
@@ -10,6 +11,11 @@ export class Indexer {
 		const parsedData = await Parser.all();
 		const index = Calculator.all(parsedData);
 		Ancestry.instance.saveData(index);
+
+		// Re-Render page as the index has been updated
+		app.workspace
+			.getActiveViewOfType(MarkdownView)
+			?.previewMode.rerender(true);
 	}
 
 	static async getIndex() {
