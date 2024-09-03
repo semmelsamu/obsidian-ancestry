@@ -1,4 +1,3 @@
-import Ancestry from "main";
 import { Parser } from "./Parser";
 import { MarkdownView } from "obsidian";
 
