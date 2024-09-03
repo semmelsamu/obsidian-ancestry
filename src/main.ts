@@ -1,6 +1,7 @@
-import { Notice, Plugin } from "obsidian";
+import { Notice, Plugin, WorkspaceLeaf, WorkspaceTabs } from "obsidian";
 import { Indexer } from "src/Indexer";
 import { Renderer } from "src/Renderer";
+import { FAMILY_TREE_VIEW, FamilyTreeView } from "./FamilyTreeView";
 
 export default class Ancestry extends Plugin {
 	public static instance: Ancestry;
@@ -37,5 +38,25 @@ export default class Ancestry extends Plugin {
 		);
 
 		this.registerMarkdownCodeBlockProcessor("ancestry", Renderer.render);
+
+		this.registerView(FAMILY_TREE_VIEW, (leaf) => new FamilyTreeView(leaf));
+
+		const ribbonIconEl = this.addRibbonIcon(
+			"network",
+			"Open family tree",
+			(evt: MouseEvent) => {
+				// Called when the user clicks the icon.
+				this.openFamilyTree();
+			}
+		);
+	}
+
+	async openFamilyTree() {
+		const leaf = this.app.workspace.getLeaf(true);
+		await leaf.setViewState({
+			type: FAMILY_TREE_VIEW,
+			active: true,
+		});
+		this.app.workspace.revealLeaf(leaf);
 	}
 }
