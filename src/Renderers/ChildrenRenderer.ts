@@ -20,19 +20,27 @@ export class ChildrenRenderer {
 			children[otherParent].push(child);
 		});
 
+		console.log(children);
+
 		Object.entries(children).forEach(([key, value]: any, index) => {
 			Util.renderWikilinks(
 				value.map((person: any) => person.name),
 				childrenParagraph
 			);
 
-			if (!key || key == "undefined") return;
+			if (!key || key == "undefined") {
+				childrenParagraph.appendChild(
+					document.createTextNode(" (unbekanntes anderes Elternteil)")
+				);
+			} else {
+				childrenParagraph.appendChild(
+					document.createTextNode(" (mit ")
+				);
 
-			childrenParagraph.appendChild(document.createTextNode(" (mit "));
+				Util.renderWikilink(key, childrenParagraph);
 
-			Util.renderWikilink(key, childrenParagraph);
-
-			childrenParagraph.appendChild(document.createTextNode(")"));
+				childrenParagraph.appendChild(document.createTextNode(")"));
+			}
 
 			if (index < Object.entries(children).length - 1) {
 				childrenParagraph.appendChild(document.createTextNode("; "));
