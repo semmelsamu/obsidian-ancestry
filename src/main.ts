@@ -39,6 +39,7 @@ export default class Ancestry extends Plugin {
 
 		this.registerMarkdownCodeBlockProcessor("ancestry", Renderer.render);
 
+		/*
 		this.registerView(FAMILY_TREE_VIEW, (leaf) => new FamilyTreeView(leaf));
 
 		const ribbonIconEl = this.addRibbonIcon(
@@ -49,8 +50,10 @@ export default class Ancestry extends Plugin {
 				this.openFamilyTree();
 			}
 		);
+        */
 	}
 
+	/*
 	async openFamilyTree() {
 		const leaf = this.app.workspace.getLeaf(true);
 		await leaf.setViewState({
@@ -59,4 +62,5 @@ export default class Ancestry extends Plugin {
 		});
 		this.app.workspace.revealLeaf(leaf);
 	}
+    */
 }
